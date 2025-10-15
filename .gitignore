@@ -1,0 +1,77 @@
+##############################
+# STM32CubeIDE Project Ignore
+##############################
+
+# Build output folders
+/Debug/
+/Release/
+/build/
+/Build/
+
+# Compiled binary files
+*.elf
+*.bin
+*.hex
+*.map
+*.list
+
+# Object and dependency files
+*.o
+*.d
+*.su
+*.dep
+
+# Linker and listing files
+*.lss
+*.lst
+
+# Auto-generated make and dependency files
+subdir.mk
+objects.list
+sources.mk
+
+# IDE-specific configuration (Eclipse-based)
+.settings/
+.metadata/
+.project
+.cproject
+*.launch
+*.log
+
+# Temporary / backup files
+*.bak
+*.tmp
+*.swp
+*.swo
+*.swd
+*.dmp
+*.stackdump
+
+# OS-specific junk
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# Optional: Ignore local VSCode or JetBrains configs if used
+.vscode/
+.idea/
+
+##############################
+# Custom Additions (optional)
+##############################
+
+# Generated CMSIS or HAL code (if not manually modified)
+Drivers/CMSIS/Device/
+Drivers/STM32*/Include/
+Drivers/STM32*/Src/
+
+# Generated Middleware (optional)
+Middlewares/Third_Party/*/
+
+# Binary assets
+*.zip
+*.7z
+*.tar
+*.gz
+
