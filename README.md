@@ -1,7 +1,7 @@
 <p align="center">
   <h1 align="center">로타리 엔코더 기반 스마트 세탁기 제어 시스템✨</h1>
 	<p align="center">
-		<img width="60%" alt="시연 GIF" src="https://github.com/user-attachments/assets/5492c070-8596-45de-9afb-cd5824fb7b2c" />
+		<img width="90%" alt="시연 GIF" src="https://github.com/user-attachments/assets/5492c070-8596-45de-9afb-cd5824fb7b2c" />
 	</p>
 </p>
 
