@@ -300,8 +300,12 @@ case DEHYDRATIONTIME :
 <p align="center" style="margin: 20px 0;">
   <img width="60%" alt="Document Image 1" src="https://github.com/user-attachments/assets/479861fc-0fe9-4921-b9ce-73b55ea36d98" />
 </p>
-<img width="60%" alt="Document Image 2" src="https://github.com/user-attachments/assets/4c73bf03-0048-4198-a8fb-3f16980c9bbd" />
-<img width="60%" alt="Document Image 3" src="https://github.com/user-attachments/assets/17c5fc4e-af9c-4339-bd49-bf6b53158cbe" />
+<p align="center">
+	<img width="60%" alt="Document Image 2" src="https://github.com/user-attachments/assets/4c73bf03-0048-4198-a8fb-3f16980c9bbd" />
+</p>
+<p align="center">
+	<img width="60%" alt="Document Image 3" src="https://github.com/user-attachments/assets/17c5fc4e-af9c-4339-bd49-bf6b53158cbe" />
+</p>
 
 &nbsp;다음은 TIM2의 Counter와 Prescaler의 Value Data Sheet입니다. <br/>
 보면 65535까지 카운터가 가능한 것을 알 수 있습니다. <br/>
