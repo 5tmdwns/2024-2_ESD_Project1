@@ -81,12 +81,12 @@
 ## 3. 회로
 ### 3.1 CAD 회로
 <p align="center" style="margin: 20px 0;">
-  <img width="90%" alt="CAD Image" src="https://github.com/user-attachments/assets/2dc3faa3-c67e-45a2-96a3-923f7bd07448" />
+  <img width="60%" alt="CAD Image" src="https://github.com/user-attachments/assets/2dc3faa3-c67e-45a2-96a3-923f7bd07448" />
 </p>
 
 ### 3.2 실제 회로
 <p align="center" style="margin: 20px 0;">
-  <img width="90%" alt="실제 회로 Image" src="https://github.com/user-attachments/assets/cd3008ad-d133-4b20-9c47-ba5fcbd05d31" />
+  <img width="60%" alt="실제 회로 Image" src="https://github.com/user-attachments/assets/cd3008ad-d133-4b20-9c47-ba5fcbd05d31" />
 </p>
 
 ## 4. 보드별 코드 및 통신 분석
@@ -135,7 +135,7 @@ void SPI_sendDataToAr(uint8_t data)
 이는 앞서 언급했듯이, 로터리 회전의 빠른 변화를 LCD가 채야하기 때문에 선택한 통신이라고 볼 수 있습니다. <br/>
 SPI는 고속 데이터 전송에 적합한데, 클럭 속도와 데이터 프로토콜을 최적화 할 수 있어 높은 전송 속도를 지원합니다. <br/> 
 따라서, SPI는 시간에 민감한 응용 프로그램에서 효율적으로 데이터를 송수신할 수 있다는 장점을 이용한 것입니다. <br/>
-다만, 많은 핀을 사용한다는 단점이 있지만, 센서의 사용이 한개 뿐이기 때문에, 가능한 조건입니다. <br/> 
+다만, 많은 핀을 사용한다는 단점이 있지만, 센서의 사용이 한개 뿐이기 때문에 가능한 조건입니다. <br/> 
 위에서, 두개의 Slave에 데이터를 전달 해야 하기 때문에, 다른 Atmega328p보드의 SS핀을 9번 핀(PB9)으로 설정하였습니다. <br/> 
 또한, 위에서 로타리 버튼입력으로 인한 STM으로의 Data 전송(Polling 방식)과, 로타리 회전입력으로 인한 STM으로의 Data 전송(ISR 방식)이 동시에 발동 될 수 있어 LCD에 연결한 STM으로 보내는 Data는 STM과 연결된 MOSI핀에서 Data Loss가 일어날 수도 있습니다. <br/>
 따라서, STM에서 제대로 데이터를 받았다는 ACK 신호를 보내어 로타리 엔코더의 다음 동작이 일어날 수 있게
@@ -285,23 +285,23 @@ case DEHYDRATIONTIME :
 ```
 
 &nbsp;마지막 탈수 모드를 선택하고 세탁이 가동하는 동안에는 엔코더의 동작을 멈추게 설계하였습니다. <br/>
-이는 STM에서의 끝났다는 신호(ACK)을 사용하여 다시 세탁모드를 선택하는 단계로 돌아가도록 설계하였습니다. <br/>
+이는 STM에서의 끝났다는 신호(`ACK`)을 사용하여 다시 세탁모드를 선택하는 단계로 돌아가도록 설계하였습니다. <br/>
 
 ### 4.2 Display(STM32)
 &nbsp;다음은 `STM32CubeMX`에서의 설정입니다. <br/>
 
 <p align="center" style="margin: 20px 0;">
-  <img width="70%" alt="Pin Map Image" src="https://github.com/user-attachments/assets/62b70d75-4f23-401c-ab16-9edfc8aba30f" />
+  <img width="60%" alt="Pin Map Image" src="https://github.com/user-attachments/assets/62b70d75-4f23-401c-ab16-9edfc8aba30f" />
 </p>
 
 &nbsp;로터리 엔코더와의 SPI통신이 필요하기 때문에, `PA4` ~ `PA7`까지의 4개의 SPI1핀이 활성화가 되어있습니다. <br/>
 또한, I2C 모듈을 이용한 LCD의 작업이 필요하기 때문에 `PB6`, `PB7`의 `I2C1`핀이 활성화가 되어있습니다. <br/>
 
 <p align="center" style="margin: 20px 0;">
-  <img width="90%" alt="Document Image 1" src="https://github.com/user-attachments/assets/479861fc-0fe9-4921-b9ce-73b55ea36d98" />
+  <img width="60%" alt="Document Image 1" src="https://github.com/user-attachments/assets/479861fc-0fe9-4921-b9ce-73b55ea36d98" />
 </p>
-<img width="90%" alt="Document Image 2" src="https://github.com/user-attachments/assets/4c73bf03-0048-4198-a8fb-3f16980c9bbd" />
-<img width="90%" alt="Document Image 3" src="https://github.com/user-attachments/assets/17c5fc4e-af9c-4339-bd49-bf6b53158cbe" />
+<img width="60%" alt="Document Image 2" src="https://github.com/user-attachments/assets/4c73bf03-0048-4198-a8fb-3f16980c9bbd" />
+<img width="60%" alt="Document Image 3" src="https://github.com/user-attachments/assets/17c5fc4e-af9c-4339-bd49-bf6b53158cbe" />
 
 &nbsp;다음은 TIM2의 Counter와 Prescaler의 Value Data Sheet입니다. <br/>
 보면 65535까지 카운터가 가능한 것을 알 수 있습니다. <br/>
@@ -312,7 +312,7 @@ case DEHYDRATIONTIME :
   <img width="49%" alt="Setting Image 2" src="https://github.com/user-attachments/assets/5109e609-52ae-42b6-b4cc-a1ca4b2dacd3" />
 </p>
 
-&nbsp;어떻게 보면, 좋지 않은 방법이긴 하지만, 최대 Clock 72Mhz까지 가능한 nucleoF103RB보드에서 Clock 64Mhz로 떨어뜨리는 행동은 좋지 않다고 생각합니다. <br/>
+&nbsp;어떻게 보면, 좋지 않은 방법이긴 하지만, 최대 Clock 72Mhz까지 가능한 `nucleoF103RB`보드에서 Clock 64Mhz로 떨어뜨리는 행동은 좋지 않다고 생각합니다. <br/>
 다만, Prescaler를 7999로 설정하여 64Mhz/7999+1 = 8000hz로 Counter Clock을 설정한 뒤, 8000hz로 Counter의 주기를 9999까지 가져가 1.25초 대략 1초마다 Timer Overflow Interrupt가 발생하도록 설정하였습니다. <br/>
 
 ``` c
