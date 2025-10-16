@@ -291,7 +291,7 @@ case DEHYDRATIONTIME :
 &nbsp;다음은 `STM32CubeMX`에서의 설정입니다. <br/>
 
 <p align="center" style="margin: 20px 0;">
-  <img width="90%" alt="Pin Map Image" src="https://github.com/user-attachments/assets/62b70d75-4f23-401c-ab16-9edfc8aba30f" />
+  <img width="70%" alt="Pin Map Image" src="https://github.com/user-attachments/assets/62b70d75-4f23-401c-ab16-9edfc8aba30f" />
 </p>
 
 &nbsp;로터리 엔코더와의 SPI통신이 필요하기 때문에, `PA4` ~ `PA7`까지의 4개의 SPI1핀이 활성화가 되어있습니다. <br/>
