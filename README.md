@@ -84,12 +84,12 @@
 ## 3. 회로
 ### 3.1 CAD 회로
 <p align="center" style="margin: 20px 0;">
-  <img width="60%" alt="CAD Image" src="https://github.com/user-attachments/assets/2dc3faa3-c67e-45a2-96a3-923f7bd07448" />
+  <img width="90%" alt="CAD Image" src="https://github.com/user-attachments/assets/2dc3faa3-c67e-45a2-96a3-923f7bd07448" />
 </p>
 
 ### 3.2 실제 회로
 <p align="center" style="margin: 20px 0;">
-  <img width="60%" alt="실제 회로 Image" src="https://github.com/user-attachments/assets/cd3008ad-d133-4b20-9c47-ba5fcbd05d31" />
+  <img width="90%" alt="실제 회로 Image" src="https://github.com/user-attachments/assets/cd3008ad-d133-4b20-9c47-ba5fcbd05d31" />
 </p>
 
 ## 4. 보드별 코드 및 통신 분석
