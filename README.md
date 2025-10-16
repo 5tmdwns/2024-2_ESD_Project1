@@ -365,8 +365,219 @@ void lcd_clear (void);
 #endif /* INC_I2C_LCD_H_ */
 ```
 
-&nbsp;i2c_lcd 라이브러리를 이용하여 LCD의 출력을 설계하였습니다. <br/>
+&nbsp;`i2c_lcd` 라이브러리를 이용하여 LCD의 출력을 설계하였습니다. <br/>
 
 ``` c
+...
+/* Private variables ---------------------------------------------------------*/
+I2C_HandleTypeDef hi2c1;
 
+SPI_HandleTypeDef hspi1;
+
+TIM_HandleTypeDef htim2;
+
+UART_HandleTypeDef huart2;
+
+/* USER CODE BEGIN PV */
+/* USER CODE BEGIN PV */
+uint8_t receivedData, stateData, encoderData;
+uint8_t receivedFlag = 0;
+uint8_t timerFlag = 0;
+uint8_t washingData[4];
+volatile uint16_t totalSeconds = 0;
+uint8_t minutes, display_seconds;
+uint8_t ack;
+/* USER CODE END PV */
+
+/* Private function prototypes -----------------------------------------------*/
+void SystemClock_Config(void);
+static void MX_GPIO_Init(void);
+static void MX_I2C1_Init(void);
+static void MX_SPI1_Init(void);
+static void MX_USART2_UART_Init(void);
+static void MX_TIM2_Init(void);
+/* USER CODE BEGIN PFP */
+void timerCalculator(void);
+...
+...
+void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi)
+{
+	if (hspi -> Instance == SPI1)
+	{
+		if (receivedData < 3)
+			memcpy(&encoderData, &receivedData, sizeof(receivedData));
+		else if (receivedData >= 3)
+		{
+			memcpy(&stateData, &receivedData, sizeof(receivedData));
+			ack = 0x20;
+			HAL_SPI_Transmit(&hspi1, &ack, 1, 1);
+		}
+		receivedFlag = 1;
+	}
+}
+...
 ```
+
+&nbsp;사용하는 변수명과 함수명입니다. <br/>
+기본 설정 외에, 엔코더에서 전송하는 Data를 SPI Interrupt Recall함수로 receivedData를 받아 0, 1, 2는 엔코더의 데이터, 3 ~ 7은 세탁 단계의 데이터입니다. <br/>
+또한, 아두이노 로타리의 버튼을 누를 시에 Data와 아두이노 로타리의 회전에 의한 Data가 겹쳐서 씹히는 경우를 방지한 버튼을 눌렀을 시의 Data를 잘 받았으면 ack =0x20을 전송해줍니다. <br/>
+
+``` c
+...
+  /* USER CODE BEGIN 2 */
+  lcd_init();
+  HAL_SPI_Receive_IT(&hspi1, &receivedData, sizeof(receivedData));
+  /* USER CODE END 2 */
+
+  /* Infinite loop */
+  /* USER CODE BEGIN WHILE */
+  while (1)
+  {
+    /* USER CODE END WHILE */
+	  if (receivedFlag == 1)
+	  {
+		  switch (stateData)
+		  {
+		  case 3 :
+			  lcd_clear();
+			  lcd_put_cur(0, 0);
+			  lcd_send_string("Regular Wash");
+			  if (encoderData == 0)
+			  {
+				  lcd_clear();
+				  lcd_put_cur(0, 0);
+				  lcd_send_string("Regular Wash");
+				  memcpy(washingData, &encoderData, sizeof(encoderData));
+			  }
+			  else if (encoderData == 1)
+			  {
+				  lcd_clear();
+				  lcd_put_cur(0, 0);
+				  lcd_send_string("Quick Wash");
+				  memcpy(washingData, &encoderData, sizeof(encoderData));
+			  }
+			  break;
+		  case 4 :
+			  lcd_clear();
+			  lcd_put_cur(0, 0);
+			  lcd_send_string("Water Temp?");
+			  lcd_put_cur(1, 0);
+			  lcd_send_string("30");
+...
+```
+
+&nbsp;While문 내부는 받아온 세탁단계 Data와 지속적으로 받는 로터리회전 Data를 I2C LCD에 출력해주는 식으로 설계하였습니다. <br/>
+각각 4가지 단계의 Data를 저장하기위해 `memcpy` 함수를 사용했습니다. <br/>
+
+``` c
+...
+		  case 7 :
+			  lcd_clear();
+			  timerCalculator();
+			  break;
+		  }
+		  ack = 0x00;
+		  receivedFlag = 0;
+	  }
+	  HAL_SPI_Receive_IT(&hspi1, &receivedData, sizeof(receivedData));
+  }
+...
+```
+
+&nbsp;마지막 탈수 선택후 LCD는 저장된 Data를 기반으로 남은 시간을 출력해주는 timer 계산 함수를 수행합니다. <br/>
+수행하는 함수는 다음과 같습니다. <br/>
+
+``` c
+...
+void timerCalculator()
+{
+	 switch(washingData[0])
+	{
+		case 0 :
+			if (washingData[3] == 0)
+				totalSeconds += 10;
+			else if (washingData[3] == 1)
+				totalSeconds += 15;
+			else if (washingData[3] == 2)
+				totalSeconds += 20;
+			break;
+		case 1 :
+			if (washingData[3] == 0)
+				totalSeconds += 5;
+			else if (washingData[3] == 1)
+				totalSeconds += 10;
+			else if (washingData[3] == 2)
+				totalSeconds += 15;
+			break;
+	}
+	if (washingData[2] == 0)
+		totalSeconds += 15;
+	else if (washingData[2] == 1)
+		totalSeconds += 20;
+	else if (washingData[2] == 2)
+		totalSeconds += 25;
+	HAL_TIM_Base_Start_IT(&htim2);
+}
+...
+...
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+	if (htim -> Instance == TIM2)
+	{
+		if(totalSeconds > 0)
+		{
+			totalSeconds --;
+			minutes = totalSeconds / 60;
+			display_seconds = totalSeconds % 60;
+			lcd_put_cur(0, 6);
+			lcd_send_data((minutes / 10) + '0');
+			lcd_send_data((minutes % 10) + '0');
+			lcd_send_string(":");
+			lcd_send_data((display_seconds / 10) + '0');
+			lcd_send_data((display_seconds % 10) + '0');
+		}
+		else
+		{
+			lcd_clear();
+			lcd_put_cur(0, 0);
+			lcd_send_string("Done!");
+			HAL_TIM_Base_Stop(&htim2);
+			stateData = 3;
+			receivedFlag = 1;
+			ack = 0x20;
+			HAL_SPI_Transmit(&hspi1, &ack, 1, 1);
+			HAL_SPI_Receive_IT(&hspi1, &receivedData, sizeof(receivedData));
+		}
+	}
+}
+...
+```
+
+&nbsp;이는 Tim2 Overflow ISR이 일어나기 전에 `totalSeconds`의 값을 계산함으로 Tim2 Overflow ISR안에 1초마다 `totalSeconds`의 값을 1씩 감소시키고, 그 값을 LCD에 띄우도록 합니다. <br/>
+이후 0초가 되었을 때, 세탁이 끝난 것이므로 다시 엔코더가 연결된 Atmega328p에 `ack = 0x20`신호를 보내 끝났다는 것을 알리고 초기상태로 돌아가도록 합니다. <br/>
+또한, LCD도 세탁선택모드로 돌아가는 신호를 주고, SPI Interrupt 수신을 활성화 시켜줍니다. <br/>
+
+## 5. 시연영상
+
+[시연 영상](https://youtu.be/wsYv2jRNWvM)
+
+&nbsp;위의 영상에 대해서 설명하면, 먼저 Rotary Endoer의 버튼을 꾹 눌러서 LCD display의 화면을 킵니다. <br/>
+그러면, 메뉴가 ‘Regular Wash’와 ‘Quick Wash’ 2개가 뜨는데, Encoder를 좌우로 돌리면서 선택할 수 있습니다. <br/>
+영상에서는 ‘Quick Wash’를 선택하였습니다. <br/>
+그러면, Water Temp를 설정하는 메뉴로 이동하는데 30, 40, 60 중 하나를 선택할 수 있고, 영상에서는 60을 선택하였습니다. <br/>
+다음메뉴는 Rinse Count를 설정하는 메뉴로, 3,4,5 중에 하나를 선택할 수 있으며, 영상에서는 4를 선택하였습니다. <br/>
+마지막 메뉴는 DehydrationTime으로 ‘Regular Wash’일 때와 ‘Quick Wash’일 때의 메뉴가 각각 다른데, 영상에서는 ‘Quick Wash’를 선택하였으므로 메뉴가 15,20,25 3개가 뜹니다. <br/>
+영상에서는 15를 선택하였고, 위의 선택지들을 반영하여 타이머가 동작하게 됩니다. <br/>
+다만, 타이머 설정 시에는 위의 계산값과는 다르게 시간을 축소시켰는데, 영상 길이를 짧게 만들어 시연 영상을 빠르게 볼 수 있게끔 설정하였습니다. <br/>
+즉, 상황에 맞게 시간을 조절할 수 있음을 뜻합니다. <br/>
+
+&nbsp;타이머가 동작함과 동시에 RGB LED에 불이 들어오고 처음에는 세탁모드이므로 노란색 빛이 켜지게 됩니다. <br/>
+그와 동시에, 모터가 한주기(빨라졌다 느려짐) 돌아갑니다. <br/>
+다음으로 헹굼모드일 때에는 RGB LED가 초록색 빛이 켜지고, 모터는 앞서 설정한 횟수만큼 주기가 돌아가게 됩니다. <br/> 
+즉, 영상에서는 4를 선택하였으므로 모터가 주기를 4번 반복합니다. 
+마지막으로, 탈수모드일 때에는 RGB LED는 파란색 빛이 켜지고, 모터는 최대속도로 돌아가게 됩니다. <br/>
+
+&nbsp;타이머가 종료되고 나면, RGB LED는 빨간색 빛이 켜지고 이 때 Passive Buzzer에서 끝났음을 뜻하는 노래가 나오게 됩니다. <br/>
+또한, LCD Display에서는 전체 세탁이 끝났으므로 다시 초기화면으로 돌아가게 됩니다. <br/>
+
+
